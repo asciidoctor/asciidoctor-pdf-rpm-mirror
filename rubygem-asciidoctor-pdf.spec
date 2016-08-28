@@ -1,7 +1,7 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.0
 %global prever .alpha.11
-%global release 1
+%global release 2
 %{?prever:
 %global gem_instdir %{gem_dir}/gems/%{gem_name}-%{mainver}%{?prever}
 %global gem_docdir %{gem_dir}/doc/%{gem_name}-%{mainver}%{?prever}
@@ -19,6 +19,7 @@ URL: https://github.com/asciidoctor/asciidoctor-pdf
 Source0: http://rubygems.org/gems/%{gem_name}-%{version}%{?prever}.gem
 # Workaround to very strict dependencies
 Patch0: asciidoctor-pdf-fix-dependencies.patch
+Provides: asciidoctor-pdf = %{version}
 BuildRequires: ruby(release)
 BuildRequires: rubygems-devel > 1.3.1
 BuildRequires: ruby >= 1.9
@@ -78,5 +79,8 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 %{gem_instdir}/Rakefile
 
 %changelog
-* Fri Jun 17 2016 Fabio Alessandro Locati <me@fale.io> - 1.5.0-0.1.alpha.11
+* Sun Aug 28 2016 Fabio Alessandro Locati <fale@redhat.com> - 1.5.0-0.2.alpha.11
+- Provide asciidoctor-pdf for simpler searching
+
+* Fri Jun 17 2016 Fabio Alessandro Locati <fale@redhat.com> - 1.5.0-0.1.alpha.11
 - Initial package
