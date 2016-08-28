@@ -1,6 +1,6 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.0
-%global prever .alpha.11
+%global prever .alpha.12
 %global release 2
 %{?prever:
 %global gem_instdir %{gem_dir}/gems/%{gem_name}-%{mainver}%{?prever}
@@ -19,7 +19,7 @@ URL: https://github.com/asciidoctor/asciidoctor-pdf
 Source0: http://rubygems.org/gems/%{gem_name}-%{version}%{?prever}.gem
 # Workaround to very strict dependencies
 Patch0: asciidoctor-pdf-fix-dependencies.patch
-Provides: asciidoctor-pdf = %{version}
+Provides: %{gem_name} = %{version}-%{release}
 BuildRequires: ruby(release)
 BuildRequires: rubygems-devel > 1.3.1
 BuildRequires: ruby >= 1.9
@@ -63,7 +63,7 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 
 %files
 %dir %{gem_instdir}
-%{_bindir}/asciidoctor-pdf
+%{_bindir}/%{gem_name}
 %license %{gem_instdir}/LICENSE.adoc
 %doc %{gem_instdir}/README.adoc
 %{gem_instdir}/bin
@@ -76,9 +76,14 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 %doc %{gem_docdir}
 %doc %{gem_instdir}/NOTICE.adoc
 %doc %{gem_instdir}/docs
+%{gem_instdir}/%{gem_name}.gemspec
+%{gem_instdir}/Gemfile
 %{gem_instdir}/Rakefile
 
 %changelog
+* Sun Aug 28 2016 Fabio Alessandro Locati <fale@redhat.com> - 1.5.0-0.2.alpha.12
+- Update to 1.5.0.alpha.12
+
 * Sun Aug 28 2016 Fabio Alessandro Locati <fale@redhat.com> - 1.5.0-0.2.alpha.11
 - Provide asciidoctor-pdf for simpler searching
 

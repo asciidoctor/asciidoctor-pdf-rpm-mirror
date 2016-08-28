@@ -1,12 +1,12 @@
---- asciidoctor-pdf.gemspec.orig	2016-06-17 16:45:46.805789233 +0200
-+++ asciidoctor-pdf.gemspec	2016-06-17 16:49:33.744107929 +0200
+--- asciidoctor-pdf.gemspec.orig	2016-08-28 11:05:13.650086466 +0200
++++ asciidoctor-pdf.gemspec	2016-08-28 11:08:35.102051988 +0200
 @@ -29,35 +29,35 @@
-       s.add_runtime_dependency(%q<asciidoctor>, ["~> 1.5.0"])
+       s.add_runtime_dependency(%q<asciidoctor>, [">= 1.5.0"])
        s.add_runtime_dependency(%q<prawn>, ["< 3.0.0", ">= 1.3.0"])
        s.add_runtime_dependency(%q<prawn-table>, ["= 0.2.2"])
 -      s.add_runtime_dependency(%q<prawn-templates>, ["= 0.0.3"])
--      s.add_runtime_dependency(%q<prawn-svg>, ["= 0.21.0"])
--      s.add_runtime_dependency(%q<prawn-icon>, ["= 1.0.0"])
+-      s.add_runtime_dependency(%q<prawn-svg>, ["= 0.25.1"])
+-      s.add_runtime_dependency(%q<prawn-icon>, ["= 1.1.0"])
 +      s.add_runtime_dependency(%q<prawn-templates>, ["< 0.0.5", ">= 0.0.3"])
 +      s.add_runtime_dependency(%q<prawn-svg>, ["< 0.30.0", ">= 0.21.0"])
 +      s.add_runtime_dependency(%q<prawn-icon>, ["< 2.0.0", ">= 1.0.0"])
@@ -15,13 +15,13 @@
 -      s.add_runtime_dependency(%q<treetop>, ["= 1.5.3"])
 +      s.add_runtime_dependency(%q<treetop>, ["< 2.0.0", ">= 1.5.3"])
      else
-       s.add_dependency(%q<rake>, ["~> 10.0"])
-       s.add_dependency(%q<asciidoctor>, ["~> 1.5.0"])
+       s.add_dependency(%q<rake>, [">= 0"])
+       s.add_dependency(%q<asciidoctor>, [">= 1.5.0"])
        s.add_dependency(%q<prawn>, ["< 3.0.0", ">= 1.3.0"])
        s.add_dependency(%q<prawn-table>, ["= 0.2.2"])
 -      s.add_dependency(%q<prawn-templates>, ["= 0.0.3"])
--      s.add_dependency(%q<prawn-svg>, ["= 0.21.0"])
--      s.add_dependency(%q<prawn-icon>, ["= 1.0.0"])
+-      s.add_dependency(%q<prawn-svg>, ["= 0.25.1"])
+-      s.add_dependency(%q<prawn-icon>, ["= 1.1.0"])
 +      s.add_dependency(%q<prawn-templates>, ["< 0.0.5", ">= 0.0.3"])
 +      s.add_dependency(%q<prawn-svg>, ["< 0.30.0", ">= 0.21.0"])
 +      s.add_dependency(%q<prawn-icon>, ["< 2.0.0", ">= 1.0.0"])
@@ -31,13 +31,13 @@
 +      s.add_dependency(%q<treetop>, ["< 2.0.0", ">= 1.5.3"])
      end
    else
-     s.add_dependency(%q<rake>, ["~> 10.0"])
-     s.add_dependency(%q<asciidoctor>, ["~> 1.5.0"])
+     s.add_dependency(%q<rake>, [">= 0"])
+     s.add_dependency(%q<asciidoctor>, [">= 1.5.0"])
      s.add_dependency(%q<prawn>, ["< 3.0.0", ">= 1.3.0"])
      s.add_dependency(%q<prawn-table>, ["= 0.2.2"])
 -    s.add_dependency(%q<prawn-templates>, ["= 0.0.3"])
--    s.add_dependency(%q<prawn-svg>, ["= 0.21.0"])
--    s.add_dependency(%q<prawn-icon>, ["= 1.0.0"])
+-    s.add_dependency(%q<prawn-svg>, ["= 0.25.1"])
+-    s.add_dependency(%q<prawn-icon>, ["= 1.1.0"])
 +    s.add_dependency(%q<prawn-templates>, ["< 0.0.5", ">= 0.0.3"])
 +    s.add_dependency(%q<prawn-svg>, ["< 0.30.0", ">= 0.21.0"])
 +    s.add_dependency(%q<prawn-icon>, ["< 2.0.0", ">= 1.0.0"])
