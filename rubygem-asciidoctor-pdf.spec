@@ -75,6 +75,7 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 %files doc
 %doc %{gem_docdir}
 %doc %{gem_instdir}/NOTICE.adoc
+%doc %{gem_instdir}/CHANGELOG.adoc
 %doc %{gem_instdir}/docs
 %{gem_instdir}/%{gem_name}.gemspec
 %{gem_instdir}/Gemfile
