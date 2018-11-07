@@ -1,6 +1,6 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.0
-%global prever .alpha.13
+%global prever .alpha.16
 %global release 6
 %{?prever:
 %global gem_instdir %{gem_dir}/gems/%{gem_name}-%{mainver}%{?prever}
@@ -17,8 +17,6 @@ Group: Development/Languages
 License: MIT
 URL: https://github.com/asciidoctor/asciidoctor-pdf
 Source0: http://rubygems.org/gems/%{gem_name}-%{version}%{?prever}.gem
-# Workaround to very strict dependencies
-Patch0: asciidoctor-pdf-fix-dependencies.patch
 Provides: %{gem_name} = %{version}-%{release}
 BuildRequires: ruby(release)
 BuildRequires: rubygems-devel > 1.3.1
@@ -42,13 +40,12 @@ BuildArch: noarch
 Documentation for %{name}.
 
 %prep
-gem unpack %{SOURCE0}
-%setup -q -D -T -n  %{gem_name}-%{version}%{?prever}
-gem spec %{SOURCE0} -l --ruby > %{gem_name}.gemspec
-%patch0
+%setup -q -n %{gem_name}-%{version}%{?prever}
+%gemspec_remove_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g treetop "= 1.5.3"
+%gemspec_add_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g treetop "< 2.0.0"
 
 %build
-gem build %{gem_name}.gemspec
+gem build ../%{gem_name}-%{version}%{?prever}.gemspec
 %gem_install -n%{gem_name}-%{version}%{?prever}.gem
 
 %install
@@ -82,6 +79,9 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 %{gem_instdir}/Rakefile
 
 %changelog
+* Wed Nov 07 2018 Christopher Brown <chris.brown@redhat.com> - 1.5.0-0.6.alpha.16
+- Update to 1.5.0.alpha.16
+
 * Sat Jul 14 2018 Fedora Release Engineering <releng@fedoraproject.org> - 1.5.0-0.6.alpha.13
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_29_Mass_Rebuild
 
