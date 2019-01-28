@@ -13,7 +13,6 @@ Name: rubygem-%{gem_name}
 Version: %{mainver}
 Release: %{?prever:0.}%{release}%{?prever}%{?dist}
 Summary: Converts AsciiDoc documents to PDF using Prawn
-Group: Development/Languages
 License: MIT
 URL: https://github.com/asciidoctor/asciidoctor-pdf
 Source0: http://rubygems.org/gems/%{gem_name}-%{version}%{?prever}.gem
@@ -32,7 +31,6 @@ Prawn PDF library.
 
 %package doc
 Summary: Documentation for %{name}
-Group: Documentation
 Requires: %{name} = %{version}-%{release}
 BuildArch: noarch
 
