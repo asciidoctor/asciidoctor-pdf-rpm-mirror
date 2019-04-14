@@ -1,7 +1,7 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.0
 %global prever .alpha.16
-%global release 7
+%global release 8
 %{?prever:
 %global gem_instdir %{gem_dir}/gems/%{gem_name}-%{mainver}%{?prever}
 %global gem_docdir %{gem_dir}/doc/%{gem_name}-%{mainver}%{?prever}
@@ -81,6 +81,9 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 %{gem_instdir}/Rakefile
 
 %changelog
+* Sun Apr 14 2019 Sergi Jimenez <tripledes@gmail.com> - 1.5.0-0.8.alpha.16
+- Fix BZ#1699514
+
 * Sat Feb 02 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.5.0-0.7.alpha.16
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_30_Mass_Rebuild
 
