@@ -1,7 +1,7 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.0
 %global prever .alpha.16
-%global release 8
+%global release 9
 %{?prever:
 %global gem_instdir %{gem_dir}/gems/%{gem_name}-%{mainver}%{?prever}
 %global gem_docdir %{gem_dir}/doc/%{gem_name}-%{mainver}%{?prever}
@@ -43,7 +43,7 @@ Documentation for %{name}.
 %gemspec_remove_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g prawn-icon "= 1.3.0"
 %gemspec_remove_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g prawn-svg ">= 0.21.0", "< 0.28.0"
 %gemspec_add_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g treetop "< 2.0.0"
-%gemspec_add_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g prawn-svg "~> 0.29.0"
+%gemspec_add_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g prawn-svg "~> 0.28.0"
 %gemspec_add_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g prawn-icon "~> 2.3.0"
 
 %build
@@ -81,6 +81,9 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 %{gem_instdir}/Rakefile
 
 %changelog
+* Mon Apr 22 2019 Sergi Jimenez <tripledes@gmail.com> - 1.5.0-0.9.alpha.16
+- Revert depending on prawn-svg 0.29.0.
+
 * Sun Apr 14 2019 Sergi Jimenez <tripledes@gmail.com> - 1.5.0-0.8.alpha.16
 - Fix BZ#1699514
 
