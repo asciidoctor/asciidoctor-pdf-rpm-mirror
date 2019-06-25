@@ -1,21 +1,15 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.0
-%global prever .alpha.16
+%global prerelease .alpha.16
 %global release 9
-%{?prever:
-%global gem_instdir %{gem_dir}/gems/%{gem_name}-%{mainver}%{?prever}
-%global gem_docdir %{gem_dir}/doc/%{gem_name}-%{mainver}%{?prever}
-%global gem_cache %{gem_dir}/cache/%{gem_name}-%{mainver}%{?prever}.gem
-%global gem_spec %{gem_dir}/specifications/%{gem_name}-%{mainver}%{?prever}.gemspec
-}
 
 Name: rubygem-%{gem_name}
 Version: %{mainver}
-Release: %{?prever:0.}%{release}%{?prever}%{?dist}
+Release: %{?prerelease:0.}%{release}%{?prerelease}%{?dist}
 Summary: Converts AsciiDoc documents to PDF using Prawn
 License: MIT
 URL: https://github.com/asciidoctor/asciidoctor-pdf
-Source0: http://rubygems.org/gems/%{gem_name}-%{version}%{?prever}.gem
+Source0: http://rubygems.org/gems/%{gem_name}-%{version}%{?prerelease}.gem
 BuildRequires: ruby(release)
 BuildRequires: rubygems-devel > 1.3.1
 BuildRequires: ruby >= 1.9
@@ -35,17 +29,17 @@ BuildArch: noarch
 Documentation for %{name}.
 
 %prep
-%setup -q -n %{gem_name}-%{version}%{?prever}
-%gemspec_remove_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g treetop "= 1.5.3"
-%gemspec_remove_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g prawn-icon "= 1.3.0"
-%gemspec_remove_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g prawn-svg ">= 0.21.0", "< 0.28.0"
-%gemspec_add_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g treetop "< 2.0.0"
-%gemspec_add_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g prawn-svg "~> 0.28.0"
-%gemspec_add_dep -s ../%{gem_name}-%{version}%{?prever}.gemspec -g prawn-icon "~> 2.3.0"
+%setup -q -n %{gem_name}-%{version}%{?prerelease}
+%gemspec_remove_dep -s ../%{gem_name}-%{version}%{?prerelease}.gemspec -g treetop "= 1.5.3"
+%gemspec_remove_dep -s ../%{gem_name}-%{version}%{?prerelease}.gemspec -g prawn-icon "= 1.3.0"
+%gemspec_remove_dep -s ../%{gem_name}-%{version}%{?prerelease}.gemspec -g prawn-svg ">= 0.21.0", "< 0.28.0"
+%gemspec_add_dep -s ../%{gem_name}-%{version}%{?prerelease}.gemspec -g treetop "< 2.0.0"
+%gemspec_add_dep -s ../%{gem_name}-%{version}%{?prerelease}.gemspec -g prawn-svg "~> 0.28.0"
+%gemspec_add_dep -s ../%{gem_name}-%{version}%{?prerelease}.gemspec -g prawn-icon "~> 2.3.0"
 
 %build
-gem build ../%{gem_name}-%{version}%{?prever}.gemspec
-%gem_install -n%{gem_name}-%{version}%{?prever}.gem
+gem build ../%{gem_name}-%{version}%{?prerelease}.gemspec
+%gem_install
 
 %install
 mkdir -p %{buildroot}%{gem_dir}
