@@ -16,12 +16,9 @@ Summary: Converts AsciiDoc documents to PDF using Prawn
 License: MIT
 URL: https://github.com/asciidoctor/asciidoctor-pdf
 Source0: http://rubygems.org/gems/%{gem_name}-%{version}%{?prever}.gem
-Provides: %{gem_name} = %{version}-%{release}
 BuildRequires: ruby(release)
 BuildRequires: rubygems-devel > 1.3.1
 BuildRequires: ruby >= 1.9
-Requires: ruby(release)
-Requires: ruby(rubygems)
 
 BuildArch: noarch
 
