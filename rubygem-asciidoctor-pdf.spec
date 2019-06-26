@@ -1,6 +1,6 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.0
-%global prerelease .alpha.16
+%global prerelease .alpha.18
 %global release 9
 
 Name: rubygem-%{gem_name}
@@ -30,12 +30,6 @@ Documentation for %{name}.
 
 %prep
 %setup -q -n %{gem_name}-%{version}%{?prerelease}
-%gemspec_remove_dep -g treetop "= 1.5.3"
-%gemspec_remove_dep -g prawn-icon "= 1.3.0"
-%gemspec_remove_dep -g prawn-svg ">= 0.21.0", "< 0.28.0"
-%gemspec_add_dep -g treetop "< 2.0.0"
-%gemspec_add_dep -g prawn-svg "~> 0.28.0"
-%gemspec_add_dep -g prawn-icon "~> 2.3.0"
 
 %build
 gem build ../%{gem_name}-%{version}%{?prerelease}.gemspec
@@ -67,11 +61,13 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 %doc %{gem_instdir}/NOTICE.adoc
 %doc %{gem_instdir}/CHANGELOG.adoc
 %doc %{gem_instdir}/docs
+%doc %{gem_instdir}/.yardopts
 %{gem_instdir}/%{gem_name}.gemspec
-%{gem_instdir}/Gemfile
-%{gem_instdir}/Rakefile
 
 %changelog
+* Wed Jun 26 2019 Christopher Brown <chris.brown@redhat.com> - 1.5.0-0.9.alpha.18
+- Update to 1.5.0.alpha.18
+
 * Mon Apr 22 2019 Sergi Jimenez <tripledes@gmail.com> - 1.5.0-0.9.alpha.16
 - Revert depending on prawn-svg 0.29.0.
 
