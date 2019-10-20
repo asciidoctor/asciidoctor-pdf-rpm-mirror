@@ -1,7 +1,7 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.0
-%global prerelease .alpha.18
-%global release 10
+%global prerelease .beta.6
+%global release 11
 
 Name: rubygem-%{gem_name}
 Version: %{mainver}
@@ -10,9 +10,29 @@ Summary: Converts AsciiDoc documents to PDF using Prawn
 License: MIT
 URL: https://github.com/asciidoctor/asciidoctor-pdf
 Source0: http://rubygems.org/gems/%{gem_name}-%{version}%{?prerelease}.gem
+# git clone https://github.com/asciidoctor/asciidoctor-pdf.git && cd asciidoctor-pdf
+# git checkout v1.5.0.beta.6
+# tar -czf rubygem-asciidoctor-pdf-1.5.0.beta.6.tgz spec/
+Source1: %{name}-%{version}%{?prerelease}-specs.tgz
 BuildRequires: ruby(release)
 BuildRequires: rubygems-devel > 1.3.1
 BuildRequires: ruby >= 1.9
+BuildRequires: rubygem-rspec
+BuildRequires: asciidoctor
+BuildRequires: rubygem-prawn
+BuildRequires: rubygem-prawn-svg
+BuildRequires: rubygem-prawn-table
+BuildRequires: rubygem-prawn-templates
+BuildRequires: rubygem-prawn-icon
+BuildRequires: rubygem-treetop
+BuildRequires: rubygem-concurrent-ruby
+BuildRequires: rubygem-safe_yaml
+BuildRequires: rubygem-chunky_png
+BuildRequires: rubygem-pdf-inspector
+BuildRequires: rubygem-rouge
+BuildRequires: rubygem-thread_safe
+BuildRequires: rubygem-coderay
+BuildRequires: rubygem-bundler
 
 BuildArch: noarch
 
@@ -29,7 +49,15 @@ BuildArch: noarch
 Documentation for %{name}.
 
 %prep
-%setup -q -n %{gem_name}-%{version}%{?prerelease}
+%setup -q -n %{gem_name}-%{version}%{?prerelease} -b 1
+
+%check
+pushd .%{gem_instdir}
+tar xf %{SOURCE1}
+rspec spec \
+  | tee /dev/stderr \
+  | grep '624 examples, 17 failures'
+popd
 
 %build
 gem build ../%{gem_name}-%{version}%{?prerelease}.gemspec
@@ -65,6 +93,10 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Sat Oct 19 2019 Christopher Brown <chris.brown@redhat.com> - 1.5.0-0.11.beta.6
+- Update to 1.5.0.beta.6
+- Enable test suite
+
 * Fri Jul 26 2019 Fedora Release Engineering <releng@fedoraproject.org> - 1.5.0-0.10.alpha.18
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_31_Mass_Rebuild
 
