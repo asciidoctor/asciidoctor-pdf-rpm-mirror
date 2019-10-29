@@ -1,7 +1,9 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.0
 %global prerelease .beta.6
-%global release 11
+%global release 12
+
+%bcond_with network
 
 Name: rubygem-%{gem_name}
 Version: %{mainver}
@@ -54,9 +56,20 @@ Documentation for %{name}.
 %check
 pushd .%{gem_instdir}
 tar xf %{SOURCE1}
+
+%if ! %{with network}
+# These tests require network connectivity.
+sed -i "/it 'should read remote image if allow-uri-read is set' do/a\\
+      skip" spec/image_spec.rb
+sed -i "/it 'should use image format specified by format attribute' do/a\\
+      skip" spec/image_spec.rb
+sed -i "/video_id = '77477140'/i\\
+      skip" spec/video_spec.rb
+%endif
+
 rspec spec \
   | tee /dev/stderr \
-  | grep '639 examples, 16 failures'
+  | grep '639 examples, 13 failures'
 popd
 
 %build
@@ -93,6 +106,9 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Tue Oct 29 2019 Vít Ondruch <vondruch@redhat.com> - 1.5.0-0.12.beta.6
+- Disable network depending tests.
+
 * Sat Oct 19 2019 Christopher Brown <chris.brown@redhat.com> - 1.5.0-0.11.beta.6
 - Update to 1.5.0.beta.6
 - Enable test suite
