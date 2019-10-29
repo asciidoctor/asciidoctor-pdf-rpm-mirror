@@ -53,6 +53,9 @@ Documentation for %{name}.
 %prep
 %setup -q -n %{gem_name}-%{version}%{?prerelease} -b 1
 
+%gemspec_remove_dep -g treetop '~> 1.5.0'
+%gemspec_add_dep -g treetop '~> 1.5'
+
 %check
 pushd .%{gem_instdir}
 cp -a %{_builddir}/{spec,examples} .
@@ -108,6 +111,7 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 %changelog
 * Tue Oct 29 2019 Vít Ondruch <vondruch@redhat.com> - 1.5.0-0.12.beta.6
 - Disable network depending tests.
+- Relax Treetop dependency.
 
 * Sat Oct 19 2019 Christopher Brown <chris.brown@redhat.com> - 1.5.0-0.11.beta.6
 - Update to 1.5.0.beta.6
