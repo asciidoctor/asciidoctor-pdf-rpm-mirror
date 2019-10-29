@@ -56,7 +56,7 @@ Documentation for %{name}.
 
 %check
 pushd .%{gem_instdir}
-tar xf %{SOURCE1}
+cp -a %{_builddir}/{spec,examples} .
 
 %if ! %{with network}
 # These tests require network connectivity.
