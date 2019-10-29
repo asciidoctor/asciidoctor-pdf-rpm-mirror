@@ -54,6 +54,20 @@ Documentation for %{name}.
 %gemspec_remove_dep -g treetop '~> 1.5.0'
 %gemspec_add_dep -g treetop '~> 1.5'
 
+%build
+gem build ../%{gem_name}-%{version}%{?prerelease}.gemspec
+%gem_install
+
+%install
+mkdir -p %{buildroot}%{gem_dir}
+cp -a .%{gem_dir}/* \
+        %{buildroot}%{gem_dir}/
+mkdir -p %{buildroot}%{_bindir}
+cp -pa .%{_bindir}/* \
+        %{buildroot}%{_bindir}/
+
+find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
+
 %check
 pushd .%{gem_instdir}
 cp -a %{_builddir}/{spec,examples} .
@@ -72,20 +86,6 @@ rspec spec \
   | tee /dev/stderr \
   | grep '639 examples, 13 failures'
 popd
-
-%build
-gem build ../%{gem_name}-%{version}%{?prerelease}.gemspec
-%gem_install
-
-%install
-mkdir -p %{buildroot}%{gem_dir}
-cp -a .%{gem_dir}/* \
-        %{buildroot}%{gem_dir}/
-mkdir -p %{buildroot}%{_bindir}
-cp -pa .%{_bindir}/* \
-        %{buildroot}%{_bindir}/
-
-find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 
 %files
 %dir %{gem_instdir}
