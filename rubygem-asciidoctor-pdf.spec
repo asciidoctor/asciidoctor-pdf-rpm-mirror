@@ -19,20 +19,20 @@ Source1: %{name}-%{version}%{?prerelease}-specs.tgz
 BuildRequires: ruby(release)
 BuildRequires: rubygems-devel > 1.3.1
 BuildRequires: ruby >= 1.9
-BuildRequires: rubygem-rspec
-BuildRequires: asciidoctor
-BuildRequires: rubygem-prawn
-BuildRequires: rubygem-prawn-svg
-BuildRequires: rubygem-prawn-table
-BuildRequires: rubygem-prawn-templates
-BuildRequires: rubygem-prawn-icon
-BuildRequires: rubygem-treetop
-BuildRequires: rubygem-concurrent-ruby
-BuildRequires: rubygem-safe_yaml
-BuildRequires: rubygem-chunky_png
-BuildRequires: rubygem-pdf-inspector
-BuildRequires: rubygem-rouge
-BuildRequires: rubygem-coderay
+BuildRequires: rubygem(rspec)
+BuildRequires: rubygem(asciidoctor)
+BuildRequires: rubygem(prawn)
+BuildRequires: rubygem(prawn-svg)
+BuildRequires: rubygem(prawn-table)
+BuildRequires: rubygem(prawn-templates)
+BuildRequires: rubygem(prawn-icon)
+BuildRequires: rubygem(treetop)
+BuildRequires: rubygem(concurrent-ruby)
+BuildRequires: rubygem(safe_yaml)
+BuildRequires: rubygem(chunky_png)
+BuildRequires: rubygem(pdf-inspector)
+BuildRequires: rubygem(rouge)
+BuildRequires: rubygem(coderay)
 
 BuildArch: noarch
 
