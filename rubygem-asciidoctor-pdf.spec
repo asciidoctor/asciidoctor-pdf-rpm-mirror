@@ -117,6 +117,7 @@ popd
 %changelog
 * Tue Oct 29 2019 Vít Ondruch <vondruch@redhat.com> - 1.5.0-0.12.beta.6
 - Disable network depending tests.
+- Relax Treetop dependency.
 
 * Sat Oct 19 2019 Christopher Brown <chris.brown@redhat.com> - 1.5.0-0.11.beta.6
 - Update to 1.5.0.beta.6
