@@ -49,13 +49,8 @@ Documentation for %{name}.
 %prep
 %setup -q -n %{gem_name}-%{version}%{?prerelease} -b 1
 
-%check
-pushd .%{gem_instdir}
-tar xf %{SOURCE1}
-rspec spec \
-  | tee /dev/stderr \
-  | grep '624 examples, 17 failures'
-popd
+%gemspec_remove_dep -g treetop '~> 1.5.0'
+%gemspec_add_dep -g treetop '~> 1.5'
 
 %build
 gem build ../%{gem_name}-%{version}%{?prerelease}.gemspec
@@ -70,6 +65,14 @@ cp -pa .%{_bindir}/* \
         %{buildroot}%{_bindir}/
 
 find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
+
+%check
+pushd .%{gem_instdir}
+tar xf %{SOURCE1}
+rspec spec \
+  | tee /dev/stderr \
+  | grep '624 examples, 17 failures'
+popd
 
 %files
 %dir %{gem_instdir}
