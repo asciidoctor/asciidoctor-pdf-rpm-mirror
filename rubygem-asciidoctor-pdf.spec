@@ -32,9 +32,7 @@ BuildRequires: rubygem-safe_yaml
 BuildRequires: rubygem-chunky_png
 BuildRequires: rubygem-pdf-inspector
 BuildRequires: rubygem-rouge
-BuildRequires: rubygem-thread_safe
 BuildRequires: rubygem-coderay
-BuildRequires: rubygem-bundler
 
 BuildArch: noarch
 
