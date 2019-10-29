@@ -51,6 +51,9 @@ Documentation for %{name}.
 %prep
 %setup -q -n %{gem_name}-%{version}%{?prerelease} -b 1
 
+# Regenerate the parser.
+tt lib/asciidoctor/pdf/formatted_text/parser.treetop
+
 %gemspec_remove_dep -g treetop '~> 1.5.0'
 %gemspec_add_dep -g treetop '~> 1.5'
 
