@@ -33,6 +33,7 @@ BuildRequires: rubygem(chunky_png)
 BuildRequires: rubygem(pdf-inspector)
 BuildRequires: rubygem(rouge)
 BuildRequires: rubygem(coderay)
+BuildRequires: rubygem(thread_safe)
 
 BuildArch: noarch
 
@@ -56,6 +57,8 @@ tt lib/asciidoctor/pdf/formatted_text/parser.treetop
 
 %gemspec_remove_dep -g treetop '~> 1.5.0'
 %gemspec_add_dep -g treetop '~> 1.5'
+%gemspec_remove_dep -g concurrent-ruby '~> 1.1.0'
+%gemspec_add_dep -g concurrent-ruby '~> 1.0'
 
 %check
 pushd .%{gem_instdir}
@@ -95,7 +98,7 @@ pushd .%{gem_instdir}
 tar xf %{SOURCE1}
 rspec spec \
   | tee /dev/stderr \
-  | grep '624 examples, 17 failures'
+  | grep '624 examples, 14 failures, 3 pending'
 popd
 
 %files
@@ -118,6 +121,9 @@ popd
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Wed Oct 30 2019 Christopher Brown <chris.brown@redhat.com> - 1.5.0-0.12.beta.6
+- Relax Concurrent dependency.
+
 * Tue Oct 29 2019 Vít Ondruch <vondruch@redhat.com> - 1.5.0-0.12.beta.6
 - Disable network depending tests.
 - Relax Treetop dependency.
