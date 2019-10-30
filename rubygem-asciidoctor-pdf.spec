@@ -33,6 +33,7 @@ BuildRequires: rubygem(chunky_png)
 BuildRequires: rubygem(pdf-inspector)
 BuildRequires: rubygem(rouge)
 BuildRequires: rubygem(coderay)
+BuildRequires: rubygem(thread_safe)
 
 BuildArch: noarch
 
@@ -56,25 +57,8 @@ tt lib/asciidoctor/pdf/formatted_text/parser.treetop
 
 %gemspec_remove_dep -g treetop '~> 1.5.0'
 %gemspec_add_dep -g treetop '~> 1.5'
-
-%check
-pushd .%{gem_instdir}
-cp -a %{_builddir}/{spec,examples} .
-
-%if ! %{with network}
-# These tests require network connectivity.
-sed -i "/it 'should read remote image if allow-uri-read is set' do/a\\
-      skip" spec/image_spec.rb
-sed -i "/it 'should use image format specified by format attribute' do/a\\
-      skip" spec/image_spec.rb
-sed -i "/video_id = '77477140'/i\\
-      skip" spec/video_spec.rb
-%endif
-
-rspec spec \
-  | tee /dev/stderr \
-  | grep '639 examples, 13 failures'
-popd
+%gemspec_remove_dep -g concurrent-ruby '~> 1.1.0'
+%gemspec_add_dep -g concurrent-ruby '~> 1.0'
 
 %build
 gem build ../%{gem_name}-%{version}%{?prerelease}.gemspec
@@ -92,10 +76,21 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 
 %check
 pushd .%{gem_instdir}
-tar xf %{SOURCE1}
+cp -a %{_builddir}/{spec,examples} .
+
+%if ! %{with network}
+# These tests require network connectivity.
+sed -i "/it 'should read remote image if allow-uri-read is set' do/a\\
+      skip" spec/image_spec.rb
+sed -i "/it 'should use image format specified by format attribute' do/a\\
+      skip" spec/image_spec.rb
+sed -i "/video_id = '77477140'/i\\
+      skip" spec/video_spec.rb
+%endif
+
 rspec spec \
   | tee /dev/stderr \
-  | grep '624 examples, 17 failures'
+  | grep '624 examples, 14 failures, 3 pending'
 popd
 
 %files
@@ -118,6 +113,9 @@ popd
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Wed Oct 30 2019 Christopher Brown <chris.brown@redhat.com> - 1.5.0-0.12.beta.6
+- Relax Concurrent dependency.
+
 * Tue Oct 29 2019 Vít Ondruch <vondruch@redhat.com> - 1.5.0-0.12.beta.6
 - Disable network depending tests.
 - Relax Treetop dependency.
