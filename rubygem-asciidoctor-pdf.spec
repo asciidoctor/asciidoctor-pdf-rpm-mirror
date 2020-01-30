@@ -1,7 +1,7 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.0
 %global prerelease .beta.6
-%global release 12
+%global release 13
 
 %bcond_with network
 
@@ -110,6 +110,9 @@ popd
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Thu Jan 30 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.5.0-0.13.beta.6
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_32_Mass_Rebuild
+
 * Tue Oct 29 2019 Vít Ondruch <vondruch@redhat.com> - 1.5.0-0.12.beta.6
 - Disable network depending tests.
 - Relax Treetop dependency.
