@@ -1,21 +1,25 @@
 %global gem_name asciidoctor-pdf
-%global mainver 1.5.0
-%global prerelease .beta.6
-%global release 14
+%global mainver 1.5.3
+%global release 2
 
 %bcond_with network
 
 Name: rubygem-%{gem_name}
 Version: %{mainver}
-Release: %{?prerelease:0.}%{release}%{?prerelease}%{?dist}
+Release: %{release}%{?dist}
 Summary: Converts AsciiDoc documents to PDF using Prawn
 License: MIT
 URL: https://github.com/asciidoctor/asciidoctor-pdf
-Source0: http://rubygems.org/gems/%{gem_name}-%{version}%{?prerelease}.gem
+Source0: http://rubygems.org/gems/%{gem_name}-%{version}.gem
 # git clone https://github.com/asciidoctor/asciidoctor-pdf.git && cd asciidoctor-pdf
-# git checkout v1.5.0.beta.6
-# tar -czf rubygem-asciidoctor-pdf-1.5.0.beta.6.tgz spec/
-Source1: %{name}-%{version}%{?prerelease}-specs.tgz
+# git checkout v1.5.3
+# tar -czf rubygem-asciidoctor-pdf-1.5.3-specs-examples.tgz spec/
+Source1: %{name}-%{version}-specs-examples.tgz
+
+# fix numeric assertions in test suite
+# https://github.com/asciidoctor/asciidoctor-pdf/issues/1542
+Patch0: fix-numeric-assertions-in-test-suite.patch
+
 BuildRequires: ruby(release)
 BuildRequires: rubygems-devel > 1.3.1
 BuildRequires: ruby >= 1.9
@@ -49,16 +53,15 @@ BuildArch: noarch
 Documentation for %{name}.
 
 %prep
-%setup -q -n %{gem_name}-%{version}%{?prerelease} -b 1
+%setup -q -n %{gem_name}-%{version} -b 1
+mv %{_builddir}/{spec,examples} .
+%patch0 -p1
 
 # Regenerate the parser.
 tt lib/asciidoctor/pdf/formatted_text/parser.treetop
 
-%gemspec_remove_dep -g treetop '~> 1.5.0'
-%gemspec_add_dep -g treetop '~> 1.5'
-
 %build
-gem build ../%{gem_name}-%{version}%{?prerelease}.gemspec
+gem build ../%{gem_name}-%{version}.gemspec
 %gem_install
 
 %install
@@ -72,8 +75,6 @@ cp -pa .%{_bindir}/* \
 find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 
 %check
-pushd .%{gem_instdir}
-cp -a %{_builddir}/{spec,examples} .
 
 %if ! %{with network}
 # These tests require network connectivity.
@@ -87,12 +88,12 @@ sed -i "/video_id = '77477140'/i\\
 
 rspec spec \
   | tee /dev/stderr \
-  | grep '639 examples, 14 failures, 3 pending'
-popd
+  | grep '980 examples, 15 failures, 3 pending'
 
 %files
 %dir %{gem_instdir}
 %{_bindir}/%{gem_name}
+%{_bindir}/%{gem_name}-optimize
 %license %{gem_instdir}/LICENSE.adoc
 %doc %{gem_instdir}/README.adoc
 %{gem_instdir}/bin
@@ -110,6 +111,12 @@ popd
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Wed May 6 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.3-2
+- Patch test suite to fix numeric asssertions
+
+* Tue May 5 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.3-1
+- Bump to 1.5.3
+
 * Fri Feb 7 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.0-0.14.beta.6
 - Allow for additional failing test and warnings
 

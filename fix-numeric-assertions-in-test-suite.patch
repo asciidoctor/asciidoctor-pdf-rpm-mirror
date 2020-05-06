@@ -1,0 +1,222 @@
+From a1acd43afb15c353d40744c059e669651b04b116 Mon Sep 17 00:00:00 2001
+From: Dan Allen <dan.j.allen@gmail.com>
+Date: Tue, 5 May 2020 14:02:12 -0600
+Subject: [PATCH] resolves #1542 fix numeric assertions in test suite
+
+- account for the fact that pdf-core 0.8.1 truncates whole number floats
+- disable hyphens and URI cache tests if gems not available
+---
+ CHANGELOG.adoc                        |  6 ++++++
+ spec/cover_page_spec.rb               |  4 ++--
+ spec/font_spec.rb                     |  2 +-
+ spec/formatted_text_formatter_spec.rb |  4 ++--
+ spec/hyphens_spec.rb                  |  2 +-
+ spec/image_spec.rb                    | 16 ++++++++--------
+ spec/page_spec.rb                     | 19 +++++++++++++++----
+ 7 files changed, 35 insertions(+), 18 deletions(-)
+
+diff --git a/CHANGELOG.adoc b/CHANGELOG.adoc
+index d8b4689c..d4e8a325 100644
+--- a/CHANGELOG.adoc
++++ b/CHANGELOG.adoc
+@@ -5,6 +5,12 @@
+ This document provides a high-level view of the changes to the {project-name} by release.
+ For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
+ 
++== Unreleased
++
++Bug Fixes::
++
++* fix numeric assertions in test suite (#1542)
++
+ == 1.5.3 (2020-02-28) - @mojavelinux
+ 
+ Bug Fixes::
+diff --git a/spec/cover_page_spec.rb b/spec/cover_page_spec.rb
+index 8b42caf3..9b7e4ff7 100644
+--- a/spec/cover_page_spec.rb
++++ b/spec/cover_page_spec.rb
+@@ -177,7 +177,7 @@
+     (expect images).to have_size 1
+     cover_image = images[0]
+     (expect cover_image[:x].to_f).to eql 0.0
+-    (expect cover_image[:width]).to eql pdf_page_size[0]
++    (expect cover_image[:width]).to eql pdf_page_size[0].to_f
+     (expect cover_image[:height]).to be > pdf_page_size[1]
+     (expect cover_image[:y]).to be > pdf_page_size[1]
+   end
+@@ -226,7 +226,7 @@
+     pdf = to_pdf input, analyze: true
+     (expect pdf.pages).to have_size 2
+     (expect pdf.pages[0][:text]).to be_empty
+-    (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
++    (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+     (expect pdf.pages[1][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
+     (expect pdf.pages[1][:text]).not_to be_empty
+   end
+diff --git a/spec/font_spec.rb b/spec/font_spec.rb
+index 8a218924..2bd8deb6 100644
+--- a/spec/font_spec.rb
++++ b/spec/font_spec.rb
+@@ -327,7 +327,7 @@
+       }
+       pdf = to_pdf 'https://asciidoctor.org[Asciidoctor]', pdf_theme: pdf_theme, analyze: true
+       linked_text = (pdf.find_text 'Asciidoctor')[0]
+-      (expect linked_text[:font_size]).to eql 9.0
++      (expect linked_text[:font_size].to_f).to eql 9.0
+     end
+   end
+ end
+diff --git a/spec/formatted_text_formatter_spec.rb b/spec/formatted_text_formatter_spec.rb
+index 699a0276..c0ae0be7 100644
+--- a/spec/formatted_text_formatter_spec.rb
++++ b/spec/formatted_text_formatter_spec.rb
+@@ -505,9 +505,9 @@
+       min_text = (pdf.find_text 'MIN')[0]
+       normal_text = (pdf.find_text ' and ')[0]
+       max_text = (pdf.find_text 'MAX')[0]
+-      (expect min_text[:font_size]).to eql 18.0
++      (expect min_text[:font_size].to_f).to eql 18.0
+       (expect normal_text[:font_size]).to be 24
+-      (expect max_text[:font_size]).to eql 21.0
++      (expect max_text[:font_size].to_f).to eql 21.0
+     end
+ 
+     it 'should allow custom role to override styles of link' do
+diff --git a/spec/hyphens_spec.rb b/spec/hyphens_spec.rb
+index 91ee53f4..92b4def5 100644
+--- a/spec/hyphens_spec.rb
++++ b/spec/hyphens_spec.rb
+@@ -156,4 +156,4 @@
+ 
+     (expect to_file).to visually_match 'hyphens-word-break.pdf'
+   end
+-end
++end if Gem::Specification.find_by_path 'text-hyphen'
+diff --git a/spec/image_spec.rb b/spec/image_spec.rb
+index c8515fe8..e212051c 100644
+--- a/spec/image_spec.rb
++++ b/spec/image_spec.rb
+@@ -252,7 +252,7 @@
+       text = pdf.find_text 'Text with link'
+       (expect text).to have_size 1
+       (expect text[0][:font_name]).to eql 'mplus1mn-regular'
+-      (expect text[0][:font_size]).to eql 12.0
++      (expect text[0][:font_size].to_f).to eql 12.0
+       (expect text[0][:font_color]).to eql 'AA0000'
+     end
+ 
+@@ -264,7 +264,7 @@
+       text = pdf.find_text 'This text uses a document font.'
+       (expect text).to have_size 1
+       (expect text[0][:font_name]).to eql 'mplus1mn-regular'
+-      (expect text[0][:font_size]).to eql 12.0
++      (expect text[0][:font_size].to_f).to eql 12.0
+       (expect text[0][:font_color]).to eql 'AA0000'
+     end
+ 
+@@ -276,7 +276,7 @@
+       text = pdf.find_text 'This text uses the default SVG font.'
+       (expect text).to have_size 1
+       (expect text[0][:font_name]).to eql 'NotoSerif'
+-      (expect text[0][:font_size]).to eql 12.0
++      (expect text[0][:font_size].to_f).to eql 12.0
+       (expect text[0][:font_color]).to eql 'AA0000'
+     end
+ 
+@@ -288,7 +288,7 @@
+       text = pdf.find_text 'This text uses the serif font.'
+       (expect text).to have_size 1
+       (expect text[0][:font_name]).to eql 'Times-Roman'
+-      (expect text[0][:font_size]).to eql 12.0
++      (expect text[0][:font_size].to_f).to eql 12.0
+       (expect text[0][:font_color]).to eql 'AA0000'
+     end
+ 
+@@ -302,7 +302,7 @@
+       text = pdf.find_text 'This text uses the serif font.'
+       (expect text).to have_size 1
+       (expect text[0][:font_name]).to eql 'NotoSerif'
+-      (expect text[0][:font_size]).to eql 12.0
++      (expect text[0][:font_size].to_f).to eql 12.0
+       (expect text[0][:font_color]).to eql 'AA0000'
+     end
+ 
+@@ -317,7 +317,7 @@
+         text = pdf.find_text 'This text uses the default SVG font.'
+         (expect text).to have_size 1
+         (expect text[0][:font_name]).to eql 'Times-Roman'
+-        (expect text[0][:font_size]).to eql 12.0
++        (expect text[0][:font_size].to_f).to eql 12.0
+         (expect text[0][:font_color]).to eql 'AA0000'
+       end
+     end
+@@ -459,7 +459,7 @@
+       (expect pages).to have_size 3
+       (expect pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
+       (expect pages[0][:text][-1][:string]).to eql '1'
+-      (expect pages[1][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
++      (expect pages[1][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+       # NOTE no running content on imported pages
+       (expect pages[1][:text]).to be_empty
+       (expect pages[2][:text][-1][:string]).to eql '3'
+@@ -484,7 +484,7 @@
+       (expect pages).to have_size 3
+       (expect pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
+       (expect pages[0][:text][-1][:string]).to eql '1'
+-      (expect pages[1][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
++      (expect pages[1][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+       # NOTE no running content on imported pages
+       (expect pages[1][:text]).to be_empty
+       (expect pages[2][:text][-1][:string]).to eql '3'
+diff --git a/spec/page_spec.rb b/spec/page_spec.rb
+index c87b6954..497d8173 100644
+--- a/spec/page_spec.rb
++++ b/spec/page_spec.rb
+@@ -19,7 +19,18 @@
+       content
+       EOS
+       (expect pdf.pages).to have_size 1
+-      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
++      # NOTE pdf-core 0.8 coerces whole number floats to integers
++      (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
++    end
++
++    it 'should ignore pdf-page-size attribute if value is unrecognized name' do
++      pdf = to_pdf <<~'EOS', analyze: :page
++      :pdf-page-size: Huge
++
++      content
++      EOS
++      (expect pdf.pages).to have_size 1
++      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
+     end
+ 
+     it 'should set page size specified by pdf-page-size attribute using dimension array in points' do
+@@ -29,7 +40,7 @@
+       content
+       EOS
+       (expect pdf.pages).to have_size 1
+-      (expect pdf.pages[0][:size]).to eql [600.0, 800.0]
++      (expect pdf.pages[0][:size].map(&:to_f)).to eql [600.0, 800.0]
+     end
+ 
+     it 'should set page size specified by pdf-page-size attribute using dimension array in inches' do
+@@ -39,7 +50,7 @@
+       content
+       EOS
+       (expect pdf.pages).to have_size 1
+-      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
++      (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+     end
+ 
+     it 'should set page size specified by pdf-page-size attribute using dimension string in inches' do
+@@ -49,7 +60,7 @@
+       content
+       EOS
+       (expect pdf.pages).to have_size 1
+-      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
++      (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
+     end
+   end
+ 
