@@ -1,6 +1,6 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.3
-%global release 2
+%global release 3
 
 %bcond_with network
 
@@ -18,7 +18,7 @@ Source1: %{name}-%{version}-specs-examples.tgz
 
 # fix numeric assertions in test suite
 # https://github.com/asciidoctor/asciidoctor-pdf/issues/1542
-Patch0: fix-numeric-assertions-in-test-suite.patch
+Patch0: test-suite-fixes.patch
 
 BuildRequires: ruby(release)
 BuildRequires: rubygems-devel > 1.3.1
@@ -78,6 +78,8 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 
 %if ! %{with network}
 # These tests require network connectivity.
+sed -i "/it 'should read remote image over HTTPS if allow-uri-read is set' do/a\\
+      skip" spec/image_spec.rb
 sed -i "/it 'should read remote image if allow-uri-read is set' do/a\\
       skip" spec/image_spec.rb
 sed -i "/it 'should use image format specified by format attribute' do/a\\
@@ -86,9 +88,7 @@ sed -i "/video_id = '77477140'/i\\
       skip" spec/video_spec.rb
 %endif
 
-rspec spec \
-  | tee /dev/stderr \
-  | grep '980 examples, 15 failures, 3 pending'
+GEM_HOME=/builddir/build/BUILD/%{gem_name}-%{version}/usr/share/gems rspec 
 
 %files
 %dir %{gem_instdir}
@@ -111,6 +111,9 @@ rspec spec \
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Thu May 7 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.3-3
+- Further test suite patches
+
 * Wed May 6 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.3-2
 - Patch test suite to fix numeric asssertions
 

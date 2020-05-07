@@ -1,25 +1,25 @@
-From a1acd43afb15c353d40744c059e669651b04b116 Mon Sep 17 00:00:00 2001
+From 2225fe640f64c58cf60312e4c7039fe476900c76 Mon Sep 17 00:00:00 2001
 From: Dan Allen <dan.j.allen@gmail.com>
 Date: Tue, 5 May 2020 14:02:12 -0600
-Subject: [PATCH] resolves #1542 fix numeric assertions in test suite
+Subject: [PATCH 1/6] resolves #1542 fix numeric assertions in test suite
 
 - account for the fact that pdf-core 0.8.1 truncates whole number floats
 - disable hyphens and URI cache tests if gems not available
 ---
- CHANGELOG.adoc                        |  6 ++++++
+ CHANGELOG.adoc                        |  8 ++++++++
  spec/cover_page_spec.rb               |  4 ++--
  spec/font_spec.rb                     |  2 +-
  spec/formatted_text_formatter_spec.rb |  4 ++--
  spec/hyphens_spec.rb                  |  2 +-
- spec/image_spec.rb                    | 16 ++++++++--------
- spec/page_spec.rb                     | 19 +++++++++++++++----
- 7 files changed, 35 insertions(+), 18 deletions(-)
+ spec/image_spec.rb                    | 18 +++++++++---------
+ spec/page_spec.rb                     |  9 +++++----
+ 7 files changed, 28 insertions(+), 19 deletions(-)
 
 diff --git a/CHANGELOG.adoc b/CHANGELOG.adoc
-index d8b4689c..d4e8a325 100644
+index d8b4689c..e8ed54f0 100644
 --- a/CHANGELOG.adoc
 +++ b/CHANGELOG.adoc
-@@ -5,6 +5,12 @@
+@@ -5,6 +5,14 @@
  This document provides a high-level view of the changes to the {project-name} by release.
  For a detailed view of what has changed, refer to the {uri-repo}/commits/master[commit history] on GitHub.
  
@@ -28,6 +28,8 @@ index d8b4689c..d4e8a325 100644
 +Bug Fixes::
 +
 +* fix numeric assertions in test suite (#1542)
++* disable cache tests if open-uri-cache gem is not available
++* disable hyphen tests if text-hyphen gem is not available
 +
  == 1.5.3 (2020-02-28) - @mojavelinux
  
@@ -84,7 +86,7 @@ index 699a0276..c0ae0be7 100644
  
      it 'should allow custom role to override styles of link' do
 diff --git a/spec/hyphens_spec.rb b/spec/hyphens_spec.rb
-index 91ee53f4..92b4def5 100644
+index 91ee53f4..a1b577b8 100644
 --- a/spec/hyphens_spec.rb
 +++ b/spec/hyphens_spec.rb
 @@ -156,4 +156,4 @@
@@ -92,9 +94,9 @@ index 91ee53f4..92b4def5 100644
      (expect to_file).to visually_match 'hyphens-word-break.pdf'
    end
 -end
-+end if Gem::Specification.find_by_path 'text-hyphen'
++end unless (Gem::Specification.stubs_for 'text-hyphen').empty?
 diff --git a/spec/image_spec.rb b/spec/image_spec.rb
-index c8515fe8..e212051c 100644
+index c8515fe8..8dd0c925 100644
 --- a/spec/image_spec.rb
 +++ b/spec/image_spec.rb
 @@ -252,7 +252,7 @@
@@ -169,31 +171,30 @@ index c8515fe8..e212051c 100644
        # NOTE no running content on imported pages
        (expect pages[1][:text]).to be_empty
        (expect pages[2][:text][-1][:string]).to eql '3'
+@@ -753,7 +753,7 @@
+           OpenURI::Cache.invalidate image_url
+         end
+       end
+-    end
++    end unless (Gem::Specification.stubs_for 'open-uri-cached').empty?
+   end
+ 
+   context 'Inline' do
 diff --git a/spec/page_spec.rb b/spec/page_spec.rb
-index c87b6954..497d8173 100644
+index c87b6954..4801fb50 100644
 --- a/spec/page_spec.rb
 +++ b/spec/page_spec.rb
-@@ -19,7 +19,18 @@
+@@ -19,7 +19,8 @@
        content
        EOS
        (expect pdf.pages).to have_size 1
 -      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['LETTER']
 +      # NOTE pdf-core 0.8 coerces whole number floats to integers
 +      (expect pdf.pages[0][:size].map(&:to_f)).to eql PDF::Core::PageGeometry::SIZES['LETTER']
-+    end
-+
-+    it 'should ignore pdf-page-size attribute if value is unrecognized name' do
-+      pdf = to_pdf <<~'EOS', analyze: :page
-+      :pdf-page-size: Huge
-+
-+      content
-+      EOS
-+      (expect pdf.pages).to have_size 1
-+      (expect pdf.pages[0][:size]).to eql PDF::Core::PageGeometry::SIZES['A4']
      end
  
      it 'should set page size specified by pdf-page-size attribute using dimension array in points' do
-@@ -29,7 +40,7 @@
+@@ -29,7 +30,7 @@
        content
        EOS
        (expect pdf.pages).to have_size 1
@@ -202,7 +203,7 @@ index c87b6954..497d8173 100644
      end
  
      it 'should set page size specified by pdf-page-size attribute using dimension array in inches' do
-@@ -39,7 +50,7 @@
+@@ -39,7 +40,7 @@
        content
        EOS
        (expect pdf.pages).to have_size 1
@@ -211,7 +212,7 @@ index c87b6954..497d8173 100644
      end
  
      it 'should set page size specified by pdf-page-size attribute using dimension string in inches' do
-@@ -49,7 +60,7 @@
+@@ -49,7 +50,7 @@
        content
        EOS
        (expect pdf.pages).to have_size 1
@@ -220,3 +221,182 @@ index c87b6954..497d8173 100644
      end
    end
  
+
+From 69d223e94ba827bfdddfd27dc1e2a354c29cc7f7 Mon Sep 17 00:00:00 2001
+From: Dan Allen <dan.j.allen@gmail.com>
+Date: Wed, 6 May 2020 03:45:32 -0600
+Subject: [PATCH 2/6] compensate for change in how character_spacing is applied
+ in FontMetricCache#width_of after Prawn 2.2.2
+
+---
+ CHANGELOG.adoc                   | 1 +
+ lib/asciidoctor/pdf/converter.rb | 8 +++++++-
+ 2 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/CHANGELOG.adoc b/CHANGELOG.adoc
+index e8ed54f0..d6b095cf 100644
+--- a/CHANGELOG.adoc
++++ b/CHANGELOG.adoc
+@@ -12,6 +12,7 @@ Bug Fixes::
+ * fix numeric assertions in test suite (#1542)
+ * disable cache tests if open-uri-cache gem is not available
+ * disable hyphen tests if text-hyphen gem is not available
++* compensate for change in how character_spacing is applied in FontMetricCache#width_of after Prawn 2.2.2
+ 
+ == 1.5.3 (2020-02-28) - @mojavelinux
+ 
+diff --git a/lib/asciidoctor/pdf/converter.rb b/lib/asciidoctor/pdf/converter.rb
+index 7a3445f8..b646cade 100644
+--- a/lib/asciidoctor/pdf/converter.rb
++++ b/lib/asciidoctor/pdf/converter.rb
+@@ -1333,8 +1333,14 @@ def convert_outline_list_item node, list, opts = {}
+           marker_gap = rendered_width_of_char 'x'
+           font marker_style[:font_family], size: marker_style[:font_size] do
+             marker_width = rendered_width_of_string marker
++            # NOTE compensate if character_spacing is not applied to first character
++            # see https://github.com/prawnpdf/prawn/commit/c61c5d48841910aa11b9e3d6f0e01b68ce435329
++            character_spacing_correction = 0
++            character_spacing(-0.5) do
++              character_spacing_correction = 0.5 if (rendered_width_of_char 'x', character_spacing: -0.5) == marker_gap
++            end
+             marker_height = height_of_typeset_text marker, line_height: marker_style[:line_height], single_line: true
+-            start_position = -marker_width + -marker_gap
++            start_position = -marker_width + -marker_gap + character_spacing_correction
+             float do
+               start_new_page if @media == 'prepress' && cursor < marker_height
+               flow_bounding_box start_position, width: marker_width do
+
+From 51292e9902882a2763220f7d0f55f72aee5b9aba Mon Sep 17 00:00:00 2001
+From: Dan Allen <dan.j.allen@gmail.com>
+Date: Thu, 7 May 2020 03:02:36 -0600
+Subject: [PATCH 3/6] add logic to resolve path to bin script in RPM build
+ environment
+
+---
+ spec/spec_helper.rb | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/spec/spec_helper.rb b/spec/spec_helper.rb
+index f57a1697..66b545b9 100644
+--- a/spec/spec_helper.rb
++++ b/spec/spec_helper.rb
+@@ -297,9 +297,13 @@ def asciidoctor_1_5_7_or_better?
+     defined? Asciidoctor::LoggerManager
+   end
+ 
+-  def bin_script name, opts = {}
+-    bin_path = Gem.bin_path (opts.fetch :gem, 'asciidoctor-pdf'), name
+-    windows? ? [Gem.ruby, bin_path] : bin_path
++  def bin_script bin_name, opts = {}
++    if (gem_name = opts.fetch :gem, 'asciidoctor-pdf') == 'asciidoctor-pdf' && (rpm_build_dir = ENV['RPM_BUILD_DIR'])
++      File.join rpm_build_dir, ([gem_name, Asciidoctor::PDF::VERSION].join '-'), 'usr', 'bin', bin_name
++    else
++      bin_path = Gem.bin_path gem_name, bin_name
++      windows? ? [Gem.ruby, bin_path] : bin_path
++    end
+   end
+ 
+   def asciidoctor_bin
+
+From ff9cc79cacb23286a2967c75b216c1460ab5ac00 Mon Sep 17 00:00:00 2001
+From: Dan Allen <dan.j.allen@gmail.com>
+Date: Thu, 7 May 2020 04:34:12 -0600
+Subject: [PATCH 4/6] revert "add logic to resolve path to bin script in RPM
+ build environment"
+
+ref 51292e9902882a2763220f7d0f55f72aee5b9aba
+---
+ spec/spec_helper.rb | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/spec/spec_helper.rb b/spec/spec_helper.rb
+index 66b545b9..f57a1697 100644
+--- a/spec/spec_helper.rb
++++ b/spec/spec_helper.rb
+@@ -297,13 +297,9 @@ def asciidoctor_1_5_7_or_better?
+     defined? Asciidoctor::LoggerManager
+   end
+ 
+-  def bin_script bin_name, opts = {}
+-    if (gem_name = opts.fetch :gem, 'asciidoctor-pdf') == 'asciidoctor-pdf' && (rpm_build_dir = ENV['RPM_BUILD_DIR'])
+-      File.join rpm_build_dir, ([gem_name, Asciidoctor::PDF::VERSION].join '-'), 'usr', 'bin', bin_name
+-    else
+-      bin_path = Gem.bin_path gem_name, bin_name
+-      windows? ? [Gem.ruby, bin_path] : bin_path
+-    end
++  def bin_script name, opts = {}
++    bin_path = Gem.bin_path (opts.fetch :gem, 'asciidoctor-pdf'), name
++    windows? ? [Gem.ruby, bin_path] : bin_path
+   end
+ 
+   def asciidoctor_bin
+
+From 662636efd13f6077815db0ee0e5fa727f4c83dc1 Mon Sep 17 00:00:00 2001
+From: Dan Allen <dan.j.allen@gmail.com>
+Date: Thu, 7 May 2020 04:54:42 -0600
+Subject: [PATCH 5/6] don't run CLI tests that require Bundler unless Bundler
+ is loaded
+
+---
+ spec/cli_spec.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/spec/cli_spec.rb b/spec/cli_spec.rb
+index b4046ce1..2cf41984 100644
+--- a/spec/cli_spec.rb
++++ b/spec/cli_spec.rb
+@@ -35,7 +35,7 @@
+       (expect err).to be_empty
+       (expect Pathname.new output_file 'hello.pdf').to exist
+     end
+-  end
++  end if defined? Bundler
+ 
+   context 'Examples' do
+     it 'should convert the basic example', cli: true, visual: true do
+
+From 1b44f55fc92d8ba00501b105e26d2d712e1cd25e Mon Sep 17 00:00:00 2001
+From: Dan Allen <dan.j.allen@gmail.com>
+Date: Thu, 7 May 2020 05:02:01 -0600
+Subject: [PATCH 6/6] assert prawn-table behavior based on which version is
+ installed
+
+---
+ spec/spec_helper.rb |  1 +
+ spec/table_spec.rb  | 11 +++++++++--
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/spec/spec_helper.rb b/spec/spec_helper.rb
+index f57a1697..6bd85a87 100644
+--- a/spec/spec_helper.rb
++++ b/spec/spec_helper.rb
+@@ -17,6 +17,7 @@
+ end
+ 
+ require 'asciidoctor/pdf'
++require 'prawn/table/version'
+ require 'base64'
+ require 'chunky_png'
+ require 'fileutils' unless defined? FileUtils
+diff --git a/spec/table_spec.rb b/spec/table_spec.rb
+index 856db873..c38fc74b 100644
+--- a/spec/table_spec.rb
++++ b/spec/table_spec.rb
+@@ -397,8 +397,15 @@
+       |===
+       EOS
+ 
+-      (expect pdf.find_text 'Operation').not_to be_empty
+-      (expect pdf.find_text 'Operator').not_to be_empty
++      if (Gem::Version.new Prawn::Table::VERSION) > (Gem::Version.new '0.2.2')
++        (expect pdf.find_text 'Operation').not_to be_empty
++        (expect pdf.find_text 'Operator').not_to be_empty
++      else
++        (expect pdf.find_text 'Operation').to be_empty
++        (expect pdf.find_text 'Operatio').not_to be_empty
++        (expect pdf.find_text 'Operator').to be_empty
++        (expect pdf.find_text 'Operato').not_to be_empty
++      end
+     end
+ 
+     it 'should not break words in body rows when autowidth option is set' do
