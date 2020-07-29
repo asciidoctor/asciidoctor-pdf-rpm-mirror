@@ -1,6 +1,6 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.3
-%global release 3
+%global release 4
 
 %bcond_with network
 
@@ -111,6 +111,9 @@ GEM_HOME=/builddir/build/BUILD/%{gem_name}-%{version}/usr/share/gems rspec
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Wed Jul 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.5.3-4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
+
 * Thu May 7 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.3-3
 - Further test suite patches
 
