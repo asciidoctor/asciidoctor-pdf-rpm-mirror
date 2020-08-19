@@ -1,6 +1,6 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.3
-%global release 4
+%global release 5
 
 %bcond_with network
 
@@ -60,6 +60,10 @@ mv %{_builddir}/{spec,examples} .
 # Regenerate the parser.
 tt lib/asciidoctor/pdf/formatted_text/parser.treetop
 
+%gemspec_remove_dep -g  ttfunk "~> 1.5.0", ">= 1.5.1"
+%gemspec_remove_dep -g  prawn "~> 2.2.0"
+%gemspec_add_dep -g prawn "~> 2.3.0"
+
 %build
 gem build ../%{gem_name}-%{version}.gemspec
 %gem_install
@@ -111,6 +115,9 @@ GEM_HOME=/builddir/build/BUILD/%{gem_name}-%{version}/usr/share/gems rspec
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Wed Aug 19 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.3-5
+- Relax prawn and ttfunk gemspec dependencies
+
 * Wed Jul 29 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.5.3-4
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
 
