@@ -1,6 +1,6 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.3
-%global release 5
+%global release 6
 
 %bcond_with network
 
@@ -115,6 +115,9 @@ GEM_HOME=/builddir/build/BUILD/%{gem_name}-%{version}/usr/share/gems rspec
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Fri Aug 21 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.3-6
+- Patch broken rouge test
+
 * Wed Aug 19 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.3-5
 - Relax prawn and ttfunk gemspec dependencies
 
