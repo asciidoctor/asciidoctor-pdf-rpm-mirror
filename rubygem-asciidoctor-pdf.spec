@@ -1,6 +1,6 @@
 %global gem_name asciidoctor-pdf
 %global mainver 1.5.3
-%global release 6
+%global release 7
 
 %bcond_with network
 
@@ -62,6 +62,7 @@ tt lib/asciidoctor/pdf/formatted_text/parser.treetop
 
 %gemspec_remove_dep -g  ttfunk "~> 1.5.0", ">= 1.5.1"
 %gemspec_remove_dep -g  prawn "~> 2.2.0"
+%gemspec_remove_dep -g  prawn-svg "~> 0.30.0"
 %gemspec_add_dep -g prawn "~> 2.3.0"
 
 %build
@@ -115,6 +116,9 @@ GEM_HOME=/builddir/build/BUILD/%{gem_name}-%{version}/usr/share/gems rspec
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Tue Nov 3 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.3-7
+- Relax prawn-svg gemspec dep
+
 * Fri Aug 21 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.3-6
 - Patch broken rouge test
 
