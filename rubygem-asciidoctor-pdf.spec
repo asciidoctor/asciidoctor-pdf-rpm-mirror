@@ -1,12 +1,10 @@
 %global gem_name asciidoctor-pdf
-%global mainver 1.5.3
-%global release 7
 
 %bcond_with network
 
 Name: rubygem-%{gem_name}
-Version: %{mainver}
-Release: %{release}%{?dist}
+Version: 1.5.3
+Release: 8%{?dist}
 Summary: Converts AsciiDoc documents to PDF using Prawn
 License: MIT
 URL: https://github.com/asciidoctor/asciidoctor-pdf
@@ -61,6 +59,7 @@ mv %{_builddir}/{spec,examples} .
 tt lib/asciidoctor/pdf/formatted_text/parser.treetop
 
 %gemspec_remove_dep -g  ttfunk "~> 1.5.0", ">= 1.5.1"
+%gemspec_remove_dep -g  prawn-icon "~> 2.5.0"
 %gemspec_remove_dep -g  prawn "~> 2.2.0"
 %gemspec_remove_dep -g  prawn-svg "~> 0.30.0"
 %gemspec_add_dep -g prawn "~> 2.3.0"
@@ -116,6 +115,9 @@ GEM_HOME=/builddir/build/BUILD/%{gem_name}-%{version}/usr/share/gems rspec
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Mon Nov 16 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.3-8
+- Relax prawn-icon gemspec dep
+
 * Tue Nov 3 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.3-7
 - Relax prawn-svg gemspec dep
 
