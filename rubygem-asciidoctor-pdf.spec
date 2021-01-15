@@ -35,6 +35,7 @@ BuildRequires: rubygem(chunky_png)
 BuildRequires: rubygem(pdf-inspector)
 BuildRequires: rubygem(rouge)
 BuildRequires: rubygem(coderay)
+BuildRequires: rubygem(rexml)
 
 BuildArch: noarch
 
