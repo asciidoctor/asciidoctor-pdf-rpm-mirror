@@ -1,22 +1,16 @@
 %global gem_name asciidoctor-pdf
 
-%bcond_with network
-
 Name: rubygem-%{gem_name}
-Version: 1.5.3
-Release: 8%{?dist}
+Version: 1.5.4
+Release: 1%{?dist}
 Summary: Converts AsciiDoc documents to PDF using Prawn
 License: MIT
 URL: https://github.com/asciidoctor/asciidoctor-pdf
-Source0: http://rubygems.org/gems/%{gem_name}-%{version}.gem
+Source0: https://rubygems.org/gems/%{gem_name}-%{version}.gem
 # git clone https://github.com/asciidoctor/asciidoctor-pdf.git && cd asciidoctor-pdf
-# git checkout v1.5.3
-# tar -czf rubygem-asciidoctor-pdf-1.5.3-specs-examples.tgz spec/
+# git checkout v1.5.4
+# tar -czf rubygem-asciidoctor-pdf-1.5.3-specs-examples.tgz spec/ examples/
 Source1: %{name}-%{version}-specs-examples.tgz
-
-# fix numeric assertions in test suite
-# https://github.com/asciidoctor/asciidoctor-pdf/issues/1542
-Patch0: test-suite-fixes.patch
 
 BuildRequires: ruby(release)
 BuildRequires: rubygems-devel > 1.3.1
@@ -54,7 +48,6 @@ Documentation for %{name}.
 %prep
 %setup -q -n %{gem_name}-%{version} -b 1
 mv %{_builddir}/{spec,examples} .
-%patch0 -p1
 
 # Regenerate the parser.
 tt lib/asciidoctor/pdf/formatted_text/parser.treetop
@@ -62,8 +55,7 @@ tt lib/asciidoctor/pdf/formatted_text/parser.treetop
 %gemspec_remove_dep -g  ttfunk "~> 1.5.0", ">= 1.5.1"
 %gemspec_remove_dep -g  prawn-icon "~> 2.5.0"
 %gemspec_remove_dep -g  prawn "~> 2.2.0"
-%gemspec_remove_dep -g  prawn-svg "~> 0.30.0"
-%gemspec_add_dep -g prawn "~> 2.3.0"
+%gemspec_add_dep -g prawn "~> 2.4.0"
 
 %build
 gem build ../%{gem_name}-%{version}.gemspec
@@ -81,19 +73,7 @@ find %{buildroot}%{gem_instdir}/bin -type f | xargs chmod a+x
 
 %check
 
-%if ! %{with network}
-# These tests require network connectivity.
-sed -i "/it 'should read remote image over HTTPS if allow-uri-read is set' do/a\\
-      skip" spec/image_spec.rb
-sed -i "/it 'should read remote image if allow-uri-read is set' do/a\\
-      skip" spec/image_spec.rb
-sed -i "/it 'should use image format specified by format attribute' do/a\\
-      skip" spec/image_spec.rb
-sed -i "/video_id = '77477140'/i\\
-      skip" spec/video_spec.rb
-%endif
-
-GEM_HOME=/builddir/build/BUILD/%{gem_name}-%{version}/usr/share/gems rspec 
+GEM_HOME=/builddir/build/BUILD/%{gem_name}-%{version}/usr/share/gems rspec -t ~network
 
 %files
 %dir %{gem_instdir}
@@ -116,6 +96,11 @@ GEM_HOME=/builddir/build/BUILD/%{gem_name}-%{version}/usr/share/gems rspec
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Mon Jan 18 2021 Christopher Brown <chris.brown@redhat.com> - 1.5.4-1
+- 1.5.4
+- Remove bcond now network tests are handled in code
+- Update spec and example instructions
+
 * Mon Nov 16 2020 Christopher Brown <chris.brown@redhat.com> - 1.5.3-8
 - Relax prawn-icon gemspec dep
 
