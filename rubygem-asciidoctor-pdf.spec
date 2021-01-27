@@ -2,7 +2,7 @@
 
 Name: rubygem-%{gem_name}
 Version: 1.5.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Converts AsciiDoc documents to PDF using Prawn
 License: MIT
 URL: https://github.com/asciidoctor/asciidoctor-pdf
@@ -96,6 +96,9 @@ GEM_HOME=/builddir/build/BUILD/%{gem_name}-%{version}/usr/share/gems rspec -t ~n
 %{gem_instdir}/%{gem_name}.gemspec
 
 %changelog
+* Wed Jan 27 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.5.4-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
+
 * Mon Jan 18 2021 Christopher Brown <chris.brown@redhat.com> - 1.5.4-1
 - 1.5.4
 - Remove bcond now network tests are handled in code
